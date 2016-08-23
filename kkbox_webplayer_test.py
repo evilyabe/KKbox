@@ -1,4 +1,4 @@
-﻿import unittest, time, re
+﻿import unittest, time
 from selenium import webdriver
 from selenium import selenium
 from selenium.webdriver.common.by import By
@@ -26,7 +26,6 @@ class test_search(unittest.TestCase):
 		driver.find_element_by_id("pwd").clear()
 		driver.find_element_by_id("pwd").send_keys("evilyabe258")
 		driver.find_element_by_id("login-btn").click()
-		time.sleep(3) 
 		# Print out four button 「我的音樂庫」、「線上精選」、「電台」、「一起聽」
 		login = driver.find_elements_by_xpath("//div[@id='container']//div[@class='sidebar-nav']//span")
 		btn_number = len(login)
@@ -35,7 +34,15 @@ class test_search(unittest.TestCase):
 				break
 			else:
 				print(login[i].text + " " + "has been found!")
-				
+			
+		wait = WebDriverWait(driver, 3)
+		try:
+			wait.until(EC.element_to_be_clickable((By.ID, "search_btn_cnt")))
+			print("Your page is ready")
+		except TimeoutException:
+			print("It takes too long")
+			self.tearDown()
+			       
 		# Test search function by entering "清平調"
 		driver.find_element_by_xpath("//input[@type='text']").clear()
 		driver.find_element_by_xpath("//input[@type='text']").send_keys("清平調")
@@ -51,7 +58,13 @@ class test_search(unittest.TestCase):
 				
 		# Click 「電台」and entering to Radio tab
 		driver.find_element_by_xpath("//div[@id='container']//span[@translate='電台']").click()
-		time.sleep(2)
+		try:
+			wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class='main-content']//div[@class='cover']")))
+			print("Your page is ready")
+		except TimeoutException:
+			print("It takes too long")
+			self.tearDown()
+			
 		# Click the first radio station
 		station = driver.find_element_by_xpath("//div[@class='main-content']//div[@class='cover']")
 		hidden_btn = driver.find_element_by_xpath("//div[@class='main-content']//div[@class='cover']//a[@class='btn-radio']")
@@ -63,15 +76,17 @@ class test_search(unittest.TestCase):
 			print("alert accepted")
 		except TimeoutException:
 			print("There is no alert")
-		time.sleep(5)
+		time.sleep(3)
 		#Check the song has been change to another one after click Dislike button
 		current_song = driver.find_element_by_xpath("//div[@id='container']//div[@class='right-column']//div[@id='player']//h3//a").text
 		dislike_btn = driver.find_element_by_xpath("//div[@class='main-content']//div[@class='controller-container']//a[@analytics-event='Dislike']")
 		ActionChains(driver).move_to_element(dislike_btn).click().perform()
-		time.sleep(5)
+		time.sleep(3)
 		next_song = driver.find_element_by_xpath("//div[@id='container']//div[@class='right-column']//div[@id='player']//h3//a").text
 		if next_song != current_song:
-			print("You have press Dislike button")
+			print("You have press Dislike button and change to next song")
+		else:
+			print("Song didn't change")
 
 	def tearDown(self):
 		self.driver.close()
