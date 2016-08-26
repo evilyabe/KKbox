@@ -41,8 +41,7 @@ class test_search(unittest.TestCase):
 			print("Your page is ready")
 		except TimeoutException:
 			print("It takes too long")
-			self.tearDown()
-			       
+			
 		# Test search function by entering "清平調"
 		driver.find_element_by_xpath("//input[@type='text']").clear()
 		driver.find_element_by_xpath("//input[@type='text']").send_keys("清平調")
@@ -63,7 +62,6 @@ class test_search(unittest.TestCase):
 			print("Your page is ready")
 		except TimeoutException:
 			print("It takes too long")
-			self.tearDown()
 			
 		# Click the first radio station
 		station = driver.find_element_by_xpath("//div[@class='main-content']//div[@class='cover']")
@@ -76,6 +74,7 @@ class test_search(unittest.TestCase):
 			print("alert accepted")
 		except TimeoutException:
 			print("There is no alert")
+			
 		time.sleep(3)
 		#Check the song has been change to another one after click Dislike button
 		current_song = driver.find_element_by_xpath("//div[@id='container']//div[@class='right-column']//div[@id='player']//h3//a").text
